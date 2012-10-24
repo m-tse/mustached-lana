@@ -8,7 +8,7 @@ public class myEventBarrier implements EventBarrier{
 	public void hold() throws InterruptedException {
 		synchronized(lock1){
 		counter++;
-		System.out.println("A thread has registered with me, and is waiting for a signal.  I have "+waiters()+" threads registered.");
+		System.out.printf("Thread registered.  %d waiters\n", waiters());
 		}
 		while(!signaled){
 			Thread.sleep(100);
@@ -18,7 +18,7 @@ public class myEventBarrier implements EventBarrier{
 
 	@Override
 	public void signal() throws InterruptedException {
-		System.out.println("Someone turned my signal on!  I am broadcasting to everyone waiting on that signal.");
+		System.out.println("Signalling all waiters");
 		signaled=true;
 		while(counter>0){
 			Thread.sleep(100);
@@ -33,7 +33,7 @@ public class myEventBarrier implements EventBarrier{
 	@Override
 	public void complete() {
 		synchronized(lock1){
-		System.out.println("A thread has told me it is complete, reducing counter by 1.  Counter is now "+waiters());
+		System.out.printf("Thread completed.  %d waiters\n", waiters());
 		counter--;
 		}	
 		

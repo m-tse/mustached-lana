@@ -18,22 +18,22 @@ public class Rider extends Thread{
 		// TODO Auto-generated method stub
 		
 	}
-	public void goToFloor(int floor) throws InterruptedException{
-		if(floor==myFloor) return;
-		else if(floor>myFloor){
-			myBuilding.CallUp(floor);
-			Elevator arrivedElevator = myBuilding.AwaitUp(floor);
+	public void goToFloor(int destinationFloor) throws InterruptedException{
+		if(destinationFloor==myFloor) return;
+		else if(destinationFloor>myFloor){
+			myBuilding.CallUp(myFloor);
+			Elevator arrivedElevator = myBuilding.AwaitUp(myFloor);
 			arrivedElevator.Enter();
-			arrivedElevator.RequestFloor(floor);
-			myBuilding.exitBarriers.get(floor).hold();
+			arrivedElevator.RequestFloor(destinationFloor);
+			myBuilding.exitBarriers.get(destinationFloor).hold();
 			arrivedElevator.Exit();
 		}
-		else if(floor<myFloor){
-			myBuilding.CallDown(floor);
-			Elevator arrivedElevator = myBuilding.AwaitDown(floor);
+		else if(destinationFloor<myFloor){
+			myBuilding.CallDown(myFloor);
+			Elevator arrivedElevator = myBuilding.AwaitDown(myFloor);
 			arrivedElevator.Enter();
-			arrivedElevator.RequestFloor(floor);
-			myBuilding.exitBarriers.get(floor).hold();
+			arrivedElevator.RequestFloor(destinationFloor);
+			myBuilding.exitBarriers.get(destinationFloor).hold();
 			arrivedElevator.Exit();
 		
 		}

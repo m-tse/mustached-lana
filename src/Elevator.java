@@ -23,7 +23,7 @@ public class Elevator extends Thread{
 		direction = stationary;
 	}
 	public void run() {
-		System.out.println("Elevator Thread begins");
+		//System.out.println("Elevator Thread begins");
 		while(true){
 			if(currentRequest!=-1){
 				if(currentRequest==myFloor){
@@ -76,7 +76,7 @@ public class Elevator extends Thread{
 	}
 	//for now we will not pick up passengers along the way in the same direction, simply go to the next requested floor
 	private void VisitFloor(int floorRequest) throws InterruptedException{
-		System.out.println("Visit a floor");
+		
 		while(myFloor!=floorRequest){
 			Random rand = new Random();
 			int elevatorTime = rand.nextInt(5000);
