@@ -2,7 +2,11 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Random;
 
-
+/**
+ * Thread class representing an elevator.  Elevators play a "gatekeeper" role, in the lab description.
+ * @author tS3m
+ *
+ */
 public class Elevator extends Thread{
 	public static final int up = 1;
 	public static final int down = 2;
@@ -15,6 +19,9 @@ public class Elevator extends Thread{
 	private int currentRequest=-1;
 	private int direction;
 	private Building myBuilding;
+	/**
+	 * Floor requests are implemented in a queue
+	 */
 	private Queue<Integer> floorRequests;
 	
 	public Elevator(Building b){
@@ -71,6 +78,7 @@ public class Elevator extends Thread{
 		currentRequest=-1;
 		CloseDoors();
 	}
+	//doesn't do anything for now.
 	private void CloseDoors(){
 		return;
 	}

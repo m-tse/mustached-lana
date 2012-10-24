@@ -1,4 +1,8 @@
-
+/**
+ * Thread class representing a Rider.  Riders play the "minstrels" role in the lab description.
+ * @author tS3m
+ *
+ */
 public class Rider extends Thread{
 	Building myBuilding;
 	int myFloor;
@@ -20,7 +24,7 @@ public class Rider extends Thread{
 	}
 	public void goToFloor(int destinationFloor) throws InterruptedException{
 		if(destinationFloor==myFloor) return;
-		else if(destinationFloor>myFloor){
+		else if(destinationFloor>myFloor){//going up
 			myBuilding.CallUp(myFloor);
 			Elevator arrivedElevator = myBuilding.AwaitUp(myFloor);
 			arrivedElevator.Enter();
@@ -28,7 +32,7 @@ public class Rider extends Thread{
 			myBuilding.exitBarriers.get(destinationFloor).hold();
 			arrivedElevator.Exit();
 		}
-		else if(destinationFloor<myFloor){
+		else if(destinationFloor<myFloor){//going down
 			myBuilding.CallDown(myFloor);
 			Elevator arrivedElevator = myBuilding.AwaitDown(myFloor);
 			arrivedElevator.Enter();

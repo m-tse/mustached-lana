@@ -1,11 +1,20 @@
 import java.util.ArrayList;
 
-
+/**
+ * Building controller class.
+ * @author tS3m
+ *
+ */
 public class Building {
 	private int floors;
+	/**
+	 * Array list of elevators, currently we only have 1 elevator
+	 */
 	ArrayList<Elevator> elevators = new ArrayList<Elevator>();
 
-
+	/**
+	 * Every floor has 3 event barriers in this implementation, one for exit, one for entry going up, one for entry going down.
+	 */
 	public ArrayList<EventBarrier> exitBarriers = new ArrayList<EventBarrier>();
 	public ArrayList<EventBarrier> entryUpBarriers = new ArrayList<EventBarrier>();
 	public ArrayList<EventBarrier> entryDownBarriers = new ArrayList<EventBarrier>();
@@ -21,7 +30,7 @@ public class Building {
 
 	}
 	
-//for now, simply send a request to the elevator	
+	//for now, simply send a request to the elevator	
 	public void CallUp(int floor){
 		System.out.printf("Passenger calls up on floor %d\n", floor);
 		elevators.get(0).RequestFloor(floor);

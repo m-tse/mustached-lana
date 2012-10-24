@@ -2,7 +2,11 @@ import java.util.Random;
 
 
 
-
+/**
+ * Used for testing the EventBarrier implementation
+ * @author tS3m
+ *
+ */
 public class testGateKeeper extends Thread{
 	EventBarrier myEventBarrier;
 	int myID;

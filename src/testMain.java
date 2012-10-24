@@ -2,7 +2,11 @@ import java.util.Random;
 
 
 
-
+/**
+ * Used for testing the EventBarrier Implementation
+ * @author tS3m
+ *
+ */
 public class testMain {
 	public static void main(String[] args) throws InterruptedException{
 		EventBarrier anEventBarrier = new myEventBarrier();

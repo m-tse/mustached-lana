@@ -1,9 +1,16 @@
-
+/**
+ * Our implementation of the EventBarrier Interface.  Believed to be working.
+ * @author tS3m
+ *
+ */
 public class myEventBarrier implements EventBarrier{
 	private boolean signaled=false;
 	private int counter=0;
 	private Object lock1 = new Object();
 	
+	/**
+	 * A waiter thread calls this method to register to the EventBarrier, it waits for the EventBarrier to change to a signalled state.
+	 */
 	@Override
 	public void hold() throws InterruptedException {
 		synchronized(lock1){
@@ -16,6 +23,9 @@ public class myEventBarrier implements EventBarrier{
 		
 	}
 
+	/**
+	 * A gatekeeper thread calls this method to signal the EventBarrier into signaled state.  All waiters become alerted.  
+	 */
 	@Override
 	public void signal() throws InterruptedException {
 		System.out.println("Signalling all waiters");
@@ -29,7 +39,9 @@ public class myEventBarrier implements EventBarrier{
 		// TODO Auto-generated method stub
 		
 	}
-
+	/**
+	 * A waiter thread calls this method after it has completed, telling the EventBarrier it has finished its stuff.
+	 */
 	@Override
 	public void complete() {
 		synchronized(lock1){
@@ -38,7 +50,9 @@ public class myEventBarrier implements EventBarrier{
 		}	
 		
 	}
-
+	/**
+	 * Returns the number of waiters.
+	 */
 	@Override
 	public int waiters() {
 		return counter;

@@ -1,6 +1,10 @@
 
 
-
+/**
+ * Used for testing the EventBarrier implementation
+ * @author tS3m
+ *
+ */
 public class testThread extends Thread{
 	EventBarrier myEventBarrier;
 	int myID;

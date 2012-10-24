@@ -1,6 +1,10 @@
 import java.util.Random;
 
-
+/**
+ * Used for testing the elevator
+ * @author tS3m
+ *
+ */
 public class Main {
 	public static final int elevators = 1;
 	public static final int floors = 5;
