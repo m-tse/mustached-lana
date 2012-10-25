@@ -7,49 +7,54 @@ public class myEventBarrier implements EventBarrier{
 	private boolean signaled=false;
 	private int counter=0;
 	private Object lock1 = new Object();
+	private boolean debug = true;
 	
 	/**
-	 * A waiter thread calls this method to register to the EventBarrier, it waits for the EventBarrier to change to a signalled state.
+	 * A waiter thread calls this method to register to the EventBarrier, 
+	 * it waits for the EventBarrier to change to a signalled state.
 	 */
 	@Override
 	public void hold() throws InterruptedException {
+		System.out.printf("Current thread: %s\n", Thread.currentThread().getName());
 		synchronized(lock1){
-		counter++;
-		System.out.printf("Thread registered.  %d waiters\n", waiters());
+			counter++;
+			this.myPrint("Thread registered.  %d waiters\n", waiters());
 		}
 		while(!signaled){
-			Thread.sleep(100);
+			Thread.currentThread().sleep(1000);
 		}
-		
 	}
 
 	/**
-	 * A gatekeeper thread calls this method to signal the EventBarrier into signaled state.  All waiters become alerted.  
+	 * A gatekeeper thread calls this method to signal the EventBarrier into signaled state.  
+	 * All waiters become alerted.  
 	 */
 	@Override
 	public void signal() throws InterruptedException {
-		System.out.println("Signalling all waiters");
+		this.myPrint("Signalling all waiters\n");
 		signaled=true;
 		while(counter>0){
-			Thread.sleep(100);
+			Thread.currentThread().sleep(100);
 		}
 		signaled=false;
-		System.out.println("All threads are complete, I am now unsignaled");
+		this.myPrint("All threads are complete, I am now unsignaled\n");
 		return;
-		// TODO Auto-generated method stub
-		
 	}
+	
 	/**
 	 * A waiter thread calls this method after it has completed, telling the EventBarrier it has finished its stuff.
 	 */
 	@Override
 	public void complete() {
 		synchronized(lock1){
-		System.out.printf("Thread completed.  %d waiters\n", waiters());
-		counter--;
+			this.myPrint("Thread completed.  %d waiters\n", waiters());
+			counter--;
+			if (counter == 0) {
+				this.signaled = false;
+			}
 		}	
-		
 	}
+	
 	/**
 	 * Returns the number of waiters.
 	 */
@@ -57,5 +62,28 @@ public class myEventBarrier implements EventBarrier{
 	public int waiters() {
 		return counter;
 	}
-
+	
+	/**
+	 * Printf utility method
+	 */
+	public void myPrint(String format, Object... args) {
+		if (this.debug) {
+			System.out.printf(format, args);
+		}
+	}
+	
+	
+	/**
+	 * Turn ON mode
+	 */
+	public void debugOn() {
+		this.debug = true;
+	}
+	
+	/**
+	 * Turn OFF debug
+	 */
+	public void debugOff() {
+		this.debug = false;
+	}
 }

@@ -14,7 +14,6 @@ public class testMain {
 		gatekeep.start();
 		int counter = 0;
 		while(true){
-			
 			testThread t = new testThread(anEventBarrier, counter);
 			counter++;
 			t.start();

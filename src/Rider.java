@@ -11,35 +11,40 @@ public class Rider extends Thread{
 		myBuilding=b;
 		myFloor=floor;
 		myDestination=destination;
+		System.out.printf("new passenger on floor %d with destination %d\n", this.myFloor, this.myDestination);
 	}
 	public void run() {
 		try {
 			goToFloor(myDestination);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		// TODO Auto-generated method stub
-		
 	}
 	public void goToFloor(int destinationFloor) throws InterruptedException{
+		System.out.println("Going to destination");
+		Elevator arrived = null;
 		if(destinationFloor==myFloor) return;
 		else if(destinationFloor>myFloor){//going up
-			myBuilding.CallUp(myFloor);
-			Elevator arrivedElevator = myBuilding.AwaitUp(myFloor);
-			arrivedElevator.Enter();
-			arrivedElevator.RequestFloor(destinationFloor);
+			while (arrived == null) {
+				myBuilding.CallUp(myFloor);
+				arrived = myBuilding.AwaitUp(myFloor);
+			}
+			arrived.Enter();
+			arrived.RequestFloor(destinationFloor);
 			myBuilding.exitBarriers.get(destinationFloor).hold();
-			arrivedElevator.Exit();
+			myBuilding.exitBarriers.get(destinationFloor).complete();
+			arrived.Exit();
 		}
 		else if(destinationFloor<myFloor){//going down
-			myBuilding.CallDown(myFloor);
-			Elevator arrivedElevator = myBuilding.AwaitDown(myFloor);
-			arrivedElevator.Enter();
-			arrivedElevator.RequestFloor(destinationFloor);
+			while (arrived == null) {
+				myBuilding.CallDown(myFloor);
+				arrived = myBuilding.AwaitDown(myFloor);
+			}
+			arrived.Enter();
+			arrived.RequestFloor(destinationFloor);
 			myBuilding.exitBarriers.get(destinationFloor).hold();
-			arrivedElevator.Exit();
-		
+			myBuilding.exitBarriers.get(destinationFloor).complete();
+			arrived.Exit();
 		}
 		
 	}
