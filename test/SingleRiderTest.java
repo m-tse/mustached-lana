@@ -1,9 +1,7 @@
-import static org.junit.Assert.*;
-
-import java.util.ArrayList;
-import java.util.Random;
-
 import org.junit.Test;
+
+import Part2.Building;
+import Part2.Rider;
 
 
 public class SingleRiderTest {
@@ -12,7 +10,7 @@ public class SingleRiderTest {
 	public void testSingleRider() throws InterruptedException {
 		
 		final int elevators = 2;
-		final int floors = 5;
+		final int floors = 10;
 		final int riders = 5;
 		
 		Building b = new Building(floors, elevators);
@@ -22,10 +20,10 @@ public class SingleRiderTest {
 		int[] expectedVisitedFloors = {1, 3, 0};
 		int expectedVisits = expectedVisitedFloors.length;
 		
-		Rider r0 = new Rider(b, 1, 2);
-		Rider r1 = new Rider(b, 3, 0);
-		Rider r2 = new Rider(b, 4, 2);
-		Rider r3 = new Rider(b, 2, 0);
+		Rider r0 = new Rider(b, 1, 6);
+		Rider r1 = new Rider(b, 7, 2);
+		Rider r2 = new Rider(b, 3, 5);
+		Rider r3 = new Rider(b, 4, 0);
 //		Rider r4 = new Rider(b, 1, 2);
 //		Rider r5 = new Rider(b, 1, 2);
 //		Rider r6 = new Rider(b, 1, 2);
