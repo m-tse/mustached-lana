@@ -23,7 +23,6 @@ public class SingleRiderTest {
 		int expectedVisits = expectedVisitedFloors.length;
 		
 		
-		b.printVisitedFloors();
 		b.closeLog();
 //			
 //		for (int i = 0; i < riders; ++i) {

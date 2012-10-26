@@ -1,5 +1,7 @@
 T1: R3 pushes D4
+T1: R3 waits D4
 T0: R7 pushes U1
+T0: R7 waits U1
 E0 moves up to F0
 E0 moves up to F1
 E0 on F1 opens
@@ -20,4 +22,3 @@ E0 moves down to F3
 E0 moves down to F2
 E0 on F2 opens
 T1: R3 exits E0 on F2
-E0 on F2 closes

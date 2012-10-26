@@ -26,12 +26,12 @@ public class Rider extends Thread {
 	
 	private Elevator getElevatorGoingUp(int riderId, int current, int destination) throws InterruptedException {
 			myBuilding.CallUp(myId, riderId, current);
-			return myBuilding.AwaitUp(current);
+			return myBuilding.AwaitUp(myId, riderId, current);
 	}
 
 	private Elevator getElevatorGoingDown(int riderId, int current, int destination) throws InterruptedException {
 			myBuilding.CallDown(myId, riderId, current);
-			return myBuilding.AwaitDown(current);
+			return myBuilding.AwaitDown(myId, riderId, current);
 	}
 
 	private void rideElevator(Elevator.Direction direction, int riderId, int current, int destination) throws InterruptedException {

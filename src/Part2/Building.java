@@ -61,7 +61,8 @@ public class Building {
 		closest.RequestFloor(id, rider, current, true);
 	}
 
-	public Elevator AwaitUp(int floor) throws InterruptedException {
+	public Elevator AwaitUp(int threadId, int riderId, int floor) throws InterruptedException {
+		this.log("T%d: R%d waits U%d\n", threadId, riderId, floor);
 		EventBarrier upBarrier = exitBarriers.get(floor-1);
 		upBarrier.hold();
 		upBarrier.complete();
@@ -69,7 +70,8 @@ public class Building {
 		return arrived;
 	}
 	
-	public Elevator AwaitDown(int floor) throws InterruptedException {
+	public Elevator AwaitDown(int threadId, int riderId, int floor) throws InterruptedException {
+		this.log("T%d: R%d waits D%d\n", threadId, riderId, floor);
 		EventBarrier downBarrier = exitBarriers.get(floor-1);
 		downBarrier.hold();
 		downBarrier.complete();

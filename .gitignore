@@ -1,4 +1,7 @@
 *.class
+*.txt
+*.log
+
 
 # Package Files #
 *.jar

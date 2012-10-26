@@ -31,6 +31,8 @@ public class ElevatorSimulator {
 		DataInputStream data = new DataInputStream(file);
 		BufferedReader reader = new BufferedReader(new InputStreamReader(data));
 		
+		System.out.println("Running simulation...");
+		
 		String line = reader.readLine(); // First line format: Floors, Elevators, Riders, Threads, Capacity
 		int[] simulationInfo = parseInformation(line.split(" "));
 		int floors = simulationInfo[0];
@@ -44,15 +46,21 @@ public class ElevatorSimulator {
 		ArrayList<Rider> riderThreads = new ArrayList<Rider>();
 		
 		for (int i = 0; i < threads; ++i) {
+			System.out.printf("Starting rider %d\n", i);
 			Rider rider = new Rider(building, reader, i);
 			rider.start();
 			riderThreads.add(rider);
 		}
 		
-		for (Rider r: riderThreads) {
+		for (int i = 0; i < riderThreads.size(); ++i) {
+			Rider r = riderThreads.get(i);
 			r.join();
+			System.out.printf("Rider %d finished\n", i);
 		}
 		building.closeLog();
+		reader.close();
+		data.close();
+		file.close();
 		building.stopElevators();
 		
 	}
