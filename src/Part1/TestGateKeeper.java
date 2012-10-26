@@ -1,4 +1,7 @@
 package Part1;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Random;
 
 
@@ -7,29 +10,23 @@ import java.util.Random;
  * @author tS3m
  *
  */
-public class TestGateKeeper extends Thread{
-	EventBarrier myEventBarrier;
+public class TestGateKeeper {
+	MyEventBarrier myEventBarrier;
 	int myID;
-	
-	public TestGateKeeper(EventBarrier b,int id){
+
+	public TestGateKeeper(MyEventBarrier b, int id) throws IOException{
 		myEventBarrier=b;
 		myID=id;
-		
+
 	}
 
-	public void run(){
-		System.out.println("Gatekeeper "+myID+" has started");
-		while(true){
-			try {
-				System.out.println("waiting a few seconds");
-				Random rand = new Random();
-				int sleeptime = rand.nextInt(10000);
-				sleep(sleeptime);
-				myEventBarrier.signal();
-				System.out.println("Gatekeeper is now signalling the eventbarrier.");
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+
+	public void watch() {
+		try {
+			myEventBarrier.signal();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
+		return;
 	}
 }

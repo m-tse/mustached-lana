@@ -1,5 +1,6 @@
 package Part1;
 
+import java.io.IOException;
 import java.util.Random;
 
 
@@ -11,10 +12,10 @@ import java.util.Random;
  *
  */
 public class TestMain {
-	public static void main(String[] args) throws InterruptedException{
-		EventBarrier anEventBarrier = new MyEventBarrier();
+	public static void main(String[] args) throws InterruptedException, IOException{
+		MyEventBarrier anEventBarrier = new MyEventBarrier();
 		TestGateKeeper gatekeep = new TestGateKeeper(anEventBarrier, 0);
-		gatekeep.start();
+		gatekeep.watch();
 		int counter = 0;
 		while(true){
 			TestThread t = new TestThread(anEventBarrier, counter);

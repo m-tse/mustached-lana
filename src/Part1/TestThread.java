@@ -8,17 +8,16 @@ package Part1;
  *
  */
 public class TestThread extends Thread{
-	EventBarrier myEventBarrier;
+	MyEventBarrier myEventBarrier;
 	int myID;
 	
-	public TestThread(EventBarrier b,int id){
+	public TestThread(MyEventBarrier b,int id){
 		myEventBarrier=b;
 		myID=id;
 		
 	}
 	
 	public void run(){
-		System.out.println("Thread "+myID+" has started");
 		try {
 			myEventBarrier.hold();
 		} catch (InterruptedException e) {
@@ -29,5 +28,6 @@ public class TestThread extends Thread{
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		return;
 	}
 }

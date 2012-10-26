@@ -22,9 +22,9 @@ public class FileChooser extends JPanel implements ActionListener {
 	private JFileChooser fc;
 	private JTextArea ta;
 	private JButton selectButton;
-	private Simulator mySim;
+	private ElevatorSimulator mySim;
 	
-	public FileChooser(Simulator simulator) {
+	public FileChooser(ElevatorSimulator simulator) {
 		super(new BorderLayout());
 		this.mySim = simulator;
 		this.fc = new JFileChooser();
@@ -68,7 +68,7 @@ public class FileChooser extends JPanel implements ActionListener {
 	        }
 	    }
 	 
-	    private static void createAndShowGUI(Simulator sim) {
+	    private static void createAndShowGUI(ElevatorSimulator sim) {
 	        JFrame frame = new JFrame("FileChooserDemo");
 	        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	        frame.add(new FileChooser(sim));
@@ -76,7 +76,7 @@ public class FileChooser extends JPanel implements ActionListener {
 	        frame.setVisible(true);
 	    }
 	 
-	    public static void launch(final Simulator sim) {
+	    public static void launch(final ElevatorSimulator sim) {
 	        SwingUtilities.invokeLater(new Runnable() {
 	            public void run() {
 	                UIManager.put("swing.boldMetal", Boolean.FALSE); 

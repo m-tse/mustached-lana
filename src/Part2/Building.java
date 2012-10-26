@@ -22,7 +22,6 @@ public class Building {
 	public ArrayList<EventBarrier> exitBarriers = new ArrayList<EventBarrier>();
 	
 	private Object lock;
-	private ArrayList<Integer> visitedFloors = new ArrayList<Integer>();
 	private FileWriter logFile;
 	private PrintWriter logger; 
 
@@ -36,7 +35,7 @@ public class Building {
 			elevators.add(new Elevator(this, i, capacity));
 		for (Elevator e : elevators)
 			e.start();
-		this.logFile = new FileWriter("Elevator.log"); // true = append to existing file
+		this.logFile = new FileWriter("Elevator.log"); 
 		this.logger = new PrintWriter(logFile);
 
 	}
@@ -50,16 +49,13 @@ public class Building {
 		this.logFile.close();
 	}
 
-	// for now, simply send a request to the elevator
 	public void CallUp(int id, int rider, int current) {
-		System.out.printf("Passenger calls up on floor %d\n", current);
 		this.log("T%d: R%d pushes U%d\n", id, rider, current);
 		Elevator closest = this.findClosestElevator(Elevator.Direction.UP, current);
 		closest.RequestFloor(id, rider, current, true);
 	}
 
 	public void CallDown(int id, int rider, int current) {
-		System.out.printf("Passenger calls down on floor %d\n", current);
 		this.log("T%d: R%d pushes D%d\n", id, rider, current);
 		Elevator closest = this.findClosestElevator(Elevator.Direction.DOWN, current);
 		closest.RequestFloor(id, rider, current, true);
@@ -82,12 +78,8 @@ public class Building {
 	}
 
 	public Elevator getElevatorAtFloor(int floor) {
-		// Get first elevator found
 		for (Elevator e: this.elevators) {
-			System.out.printf("Current %d Floor %d Capacity %s HasRequest %s\n",
-					e.getCurrentFloor(), floor, e.atCapacity(), e.hasRequest(floor));
 			if (e.getCurrentFloor() == floor && !e.atCapacity()) {
-				System.out.println("GETTING ELEVATOR");
 				return e;
 			} else if (e.hasRequest(floor)) {
 				e.removeRequest(floor);
@@ -101,28 +93,12 @@ public class Building {
 		for (Elevator e: this.elevators) {
 			e.stop();
 		}
-		System.out.println("All elevators stopped.");
-	}
-	
-	
-	// For testing purposes
-	public void visitFloor(int floor) {
-		this.visitedFloors.add(floor);
 	}
 
-	public ArrayList<Integer> getVisitedFloors() {
-		return this.visitedFloors;
-	}
 	
-	public void printVisitedFloors() {
-		for (int i = 0; i < this.elevators.size(); ++i) {
-			System.out.printf("Elevator %d: %s\n", i, this.elevators.get(i).getVisitedFloors());
-		}
-	}
-	
-
 	/*
 	 *	Finds the closest elevator, closest floor same direction 
+	 *	If there are no elevators with correct direction, poll the one with lowest requests
 	 */
 	public Elevator findClosestElevator(Elevator.Direction direction, int floor) {
 		Elevator closest = null;
@@ -131,9 +107,9 @@ public class Building {
 		for (Elevator e: this.elevators) {
 			dir = e.getCurrentFloor()-floor;
 			if (dir < 0 && e.getDirection() == Elevator.Direction.UP) {
-				int newDifference = dir;
+				int newDifference = Math.abs(dir);
 				if (newDifference < difference) {
-					difference = Math.abs(newDifference);
+					difference = newDifference;
 					closest = e;
 				}
 			} else if (dir > 0 && e.getDirection() == Elevator.Direction.DOWN) {
@@ -144,44 +120,15 @@ public class Building {
 				}
 			}
 		}
-		if (closest == null) { // Not most efficient but whatever
+		if (closest == null) {
 			closest = this.getLowestRequestsElevator();
 		}
 		return closest;
 	}
-
-	public Elevator findClosestElevator(Elevator.Direction direction, int floor, Elevator excluded) {
-		Elevator closest = null;
-		int difference = Integer.MAX_VALUE;
-		int dir = 0;
-		for (Elevator e: this.elevators) {
-			dir = e.getCurrentFloor()-floor;
-			if (!e.equals(excluded)) {
-				if (dir < 0 && e.getDirection() == Elevator.Direction.UP) {
-					int newDifference = dir;
-					if (newDifference < difference) {
-						difference = Math.abs(newDifference);
-						closest = e;
-					}
-				} else if (dir > 0 && e.getDirection() == Elevator.Direction.DOWN) {
-					int newDifference = Math.abs(dir);
-					if (newDifference < difference) {
-						difference = newDifference;
-						closest = e;
-					}
-				}
-			}
-		}
-		if (closest == null) { // Not most efficient but whatever
-			closest = this.getLowestRequestsElevator();
-		}
-		return closest;
-	}
-
 	
 	public Elevator getLowestRequestsElevator() {
 		int min = Integer.MAX_VALUE;
-		Elevator best, e;
+		Elevator e;
 		int index = 0;
 		for (int i = 0; i < this.elevators.size(); ++i) {
 			e = this.elevators.get(i);
@@ -193,10 +140,4 @@ public class Building {
 		return this.elevators.get(index);
 	}
 	
-	public void updateRequests(int floor) {
-		for (Elevator e: this.elevators) {
-			e.removeRequest(floor);
-		}
-	}
-
 }

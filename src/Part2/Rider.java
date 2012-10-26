@@ -17,14 +17,12 @@ public class Rider extends Thread {
 	BufferedReader myInput;
 	int myId;
 	
-	
 	public Rider(Building b, BufferedReader input, int id){
 		lock = new Object(); 
 		myBuilding = b;
 		myInput = input;
 		myId = id;
 	}
-	
 	
 	private Elevator getElevatorGoingUp(int riderId, int current, int destination) throws InterruptedException {
 			myBuilding.CallUp(myId, riderId, current);
@@ -34,7 +32,6 @@ public class Rider extends Thread {
 	private Elevator getElevatorGoingDown(int riderId, int current, int destination) throws InterruptedException {
 			myBuilding.CallDown(myId, riderId, current);
 			return myBuilding.AwaitDown(current);
-
 	}
 
 	private void rideElevator(Elevator.Direction direction, int riderId, int current, int destination) throws InterruptedException {
@@ -48,7 +45,6 @@ public class Rider extends Thread {
 				arrived = this.getElevatorGoingDown(riderId, current, destination);
 				break;
 			case STATIONARY:
-				System.out.println("ASDKJASLKDASKLJHDAKSJHDALKSJDHALKSJDHLKJASDHLASJHALSKJDHAS");
 				break;
 			}
 		}
@@ -61,9 +57,11 @@ public class Rider extends Thread {
 	}
 	
 	private void goToFloor(int riderId, int current, int destination) throws InterruptedException{
-		System.out.println("Going to destination");
 		Elevator arrived = null;
-		if(destination==current) return;
+		if(destination==current) {
+			this.myBuilding.log("T%d: NO-OP R%d S%d D%d\n", this.myId, riderId, current, destination);
+			return;
+		}
 		else if(destination>current){ //going up
 			this.rideElevator(Direction.UP, riderId, current, destination);
 		}
@@ -72,7 +70,6 @@ public class Rider extends Thread {
 		}
 	}
 	
-	
 	public void run() {
 		String line;
 		try {
@@ -80,12 +77,10 @@ public class Rider extends Thread {
 				synchronized(lock) {
 					line = this.myInput.readLine();
 					if (line == null) {
-						System.out.println("RIDER OUT!!");
 						return;
 					}
-					System.out.println(line);
 				}		
-				int[] info = Simulator.parseInformation(line.split(" "));
+				int[] info = ElevatorSimulator.parseInformation(line.split(" "));
 				int riderId = info[0];
 				int start = info[1];
 				int destination = info[2];
