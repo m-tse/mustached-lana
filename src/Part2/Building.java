@@ -1,12 +1,12 @@
 package Part2;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
 
 import Part1.EventBarrier;
 import Part1.MyEventBarrier;
-import Part2.Elevator.Direction;
 
 /**
  * Building controller class.
@@ -17,59 +17,64 @@ import Part2.Elevator.Direction;
 
 public class Building {
 	private int floors;
-	/**
-	 * Array list of elevators, currently we only have 1 elevator
-	 */
-	ArrayList<Elevator> elevators = new ArrayList<Elevator>();
 	
-	/**
-	 * Every floor has 3 event barriers in this implementation, one for exit,
-	 * one for entry going up, one for entry going down.
-	 */
+	ArrayList<Elevator> elevators = new ArrayList<Elevator>();
 	public ArrayList<EventBarrier> exitBarriers = new ArrayList<EventBarrier>();
-	public ArrayList<EventBarrier> entryUpBarriers = new ArrayList<EventBarrier>();
-	public ArrayList<EventBarrier> entryDownBarriers = new ArrayList<EventBarrier>();
+	
+	private Object lock;
 	private ArrayList<Integer> visitedFloors = new ArrayList<Integer>();
+	private FileWriter logFile;
+	private PrintWriter logger; 
 
-	public Building(int numFloors, int numElevators) {
+	public Building(int numFloors, int numElevators, int capacity) throws IOException {
+		lock = new Object();
 		floors = numFloors;
 		for (int i = 0; i < floors; i++) {
-			entryUpBarriers.add(new MyEventBarrier());
-			entryDownBarriers.add(new MyEventBarrier());
 			exitBarriers.add(new MyEventBarrier());
 		}
 		for (int i = 0; i < numElevators; i++)
-			elevators.add(new Elevator(this));
+			elevators.add(new Elevator(this, i, capacity));
 		for (Elevator e : elevators)
 			e.start();
+		this.logFile = new FileWriter("Elevator.log"); // true = append to existing file
+		this.logger = new PrintWriter(logFile);
 
+	}
+	
+	public synchronized void log(String format, Object... args) {
+		this.logger.printf(format, args);
+	}
+	
+	public void closeLog() throws IOException {
+		this.logger.close();
+		this.logFile.close();
 	}
 
 	// for now, simply send a request to the elevator
-	public void CallUp(int floor) {
-		System.out.printf("Passenger calls up on floor %d\n", floor);
-		Elevator closest = this.findClosestElevator(Elevator.Direction.UP, floor);
-		closest.RequestFloor(floor);
+	public void CallUp(int id, int rider, int current) {
+		System.out.printf("Passenger calls up on floor %d\n", current);
+		this.log("T%d: R%d pushes U%d\n", id, rider, current);
+		Elevator closest = this.findClosestElevator(Elevator.Direction.UP, current);
+		closest.RequestFloor(id, rider, current, true);
 	}
 
-	public void CallDown(int floor) {
-		System.out.printf("Passenger calls down on floor %d\n", floor);
-		Elevator closest = this.findClosestElevator(Elevator.Direction.DOWN, floor);
-		closest.RequestFloor(floor);
+	public void CallDown(int id, int rider, int current) {
+		System.out.printf("Passenger calls down on floor %d\n", current);
+		this.log("T%d: R%d pushes D%d\n", id, rider, current);
+		Elevator closest = this.findClosestElevator(Elevator.Direction.DOWN, current);
+		closest.RequestFloor(id, rider, current, true);
 	}
 
 	public Elevator AwaitUp(int floor) throws InterruptedException {
-		EventBarrier upBarrier = exitBarriers.get(floor);
+		EventBarrier upBarrier = exitBarriers.get(floor-1);
 		upBarrier.hold();
 		upBarrier.complete();
 		Elevator arrived = this.getElevatorAtFloor(floor);
 		return arrived;
 	}
-
-
 	
 	public Elevator AwaitDown(int floor) throws InterruptedException {
-		EventBarrier downBarrier = exitBarriers.get(floor);
+		EventBarrier downBarrier = exitBarriers.get(floor-1);
 		downBarrier.hold();
 		downBarrier.complete();
 		Elevator arrived = this.getElevatorAtFloor(floor);
@@ -91,6 +96,13 @@ public class Building {
 		return null;
 	}
 
+	
+	public void stopElevators() {
+		for (Elevator e: this.elevators) {
+			e.stop();
+		}
+		System.out.println("All elevators stopped.");
+	}
 	
 	
 	// For testing purposes

@@ -1,5 +1,8 @@
 package Part2;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+
 import Part2.Elevator.Direction;
 
 /**
@@ -8,63 +11,89 @@ import Part2.Elevator.Direction;
  *
  */
 public class Rider extends Thread {
+	
+	Object lock;
 	Building myBuilding;
-	int myFloor;
-	int myDestination;
+	BufferedReader myInput;
+	int myId;
 	
-	public Rider(Building b, int floor, int destination){
-		myBuilding=b;
-		myFloor=floor;
-		myDestination=destination;
-		System.out.printf("new passenger on floor %d with destination %d\n", this.myFloor, this.myDestination);
+	
+	public Rider(Building b, BufferedReader input, int id){
+		lock = new Object(); 
+		myBuilding = b;
+		myInput = input;
+		myId = id;
 	}
 	
 	
-	private Elevator getElevatorGoingUp(int destinationFloor) throws InterruptedException {
-			myBuilding.CallUp(myFloor);
-			return myBuilding.AwaitUp(myFloor);
+	private Elevator getElevatorGoingUp(int riderId, int current, int destination) throws InterruptedException {
+			myBuilding.CallUp(myId, riderId, current);
+			return myBuilding.AwaitUp(current);
 	}
 
-	private Elevator getElevatorGoingDown(int destinationFloor) throws InterruptedException {
-			myBuilding.CallDown(myFloor);
-			return myBuilding.AwaitDown(myFloor);
+	private Elevator getElevatorGoingDown(int riderId, int current, int destination) throws InterruptedException {
+			myBuilding.CallDown(myId, riderId, current);
+			return myBuilding.AwaitDown(current);
 
 	}
 
-	private void rideElevator(Elevator.Direction direction, int destinationFloor) throws InterruptedException {
+	private void rideElevator(Elevator.Direction direction, int riderId, int current, int destination) throws InterruptedException {
 		Elevator arrived = null;
 		while (arrived == null) {
 			switch (direction) {
 			case UP:
-				arrived = this.getElevatorGoingUp(destinationFloor);
+				arrived = this.getElevatorGoingUp(riderId, current, destination);
+				break;
 			case DOWN:
-				arrived = this.getElevatorGoingDown(destinationFloor);
+				arrived = this.getElevatorGoingDown(riderId, current, destination);
+				break;
+			case STATIONARY:
+				System.out.println("ASDKJASLKDASKLJHDAKSJHDALKSJDHALKSJDHLKJASDHLASJHALSKJDHAS");
+				break;
 			}
 		}
-		arrived.Enter();
-		arrived.RequestFloor(destinationFloor);
-		myBuilding.exitBarriers.get(destinationFloor).hold();
-		myBuilding.exitBarriers.get(destinationFloor).complete();
-		arrived.Exit();
+		arrived.Enter(myId, riderId, current);
+		arrived.RequestFloor(myId, riderId, destination, false);
+		myBuilding.exitBarriers.get(destination-1).hold();
+		myBuilding.exitBarriers.get(destination-1).complete();
+		arrived.Exit(myId, riderId, destination);
 
 	}
 	
-	private void goToFloor(int destinationFloor) throws InterruptedException{
+	private void goToFloor(int riderId, int current, int destination) throws InterruptedException{
 		System.out.println("Going to destination");
 		Elevator arrived = null;
-		if(destinationFloor==myFloor) return;
-		else if(destinationFloor>myFloor){ //going up
-			this.rideElevator(Direction.UP, destinationFloor);
+		if(destination==current) return;
+		else if(destination>current){ //going up
+			this.rideElevator(Direction.UP, riderId, current, destination);
 		}
-		else if(destinationFloor<myFloor){ //going down
-			this.rideElevator(Direction.DOWN, destinationFloor);
+		else if(destination<current){ //going down
+			this.rideElevator(Direction.DOWN, riderId, current, destination);
 		}
 	}
 	
+	
 	public void run() {
+		String line;
 		try {
-			goToFloor(myDestination);
+			while(true) {
+				synchronized(lock) {
+					line = this.myInput.readLine();
+					if (line == null) {
+						System.out.println("RIDER OUT!!");
+						return;
+					}
+					System.out.println(line);
+				}		
+				int[] info = Simulator.parseInformation(line.split(" "));
+				int riderId = info[0];
+				int start = info[1];
+				int destination = info[2];
+				goToFloor(riderId, start, destination);
+			}
 		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
