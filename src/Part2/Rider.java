@@ -36,6 +36,7 @@ public class Rider extends Thread {
 
 	private void rideElevator(Elevator.Direction direction, int riderId, int current, int destination) throws InterruptedException {
 		Elevator arrived = null;
+		System.out.printf("Riding %s from %d to floor %d\n", direction.toString(), current, destination);
 		while (arrived == null) {
 			switch (direction) {
 			case UP:
@@ -45,14 +46,19 @@ public class Rider extends Thread {
 				arrived = this.getElevatorGoingDown(riderId, current, destination);
 				break;
 			case STATIONARY:
+				System.out.println("BOORING");
 				break;
 			}
 		}
+		System.out.printf("ENTERING\n");
 		arrived.Enter(myId, riderId, current);
+		myBuilding.enterBarriers.get(current-1).complete();
+		System.out.printf("EREQUESTIN\n");
 		arrived.RequestFloor(myId, riderId, destination, false);
 		myBuilding.exitBarriers.get(destination-1).hold();
-		myBuilding.exitBarriers.get(destination-1).complete();
+		System.out.printf("EXITING\n");
 		arrived.Exit(myId, riderId, destination);
+		myBuilding.exitBarriers.get(destination-1).complete();
 
 	}
 	
@@ -84,6 +90,7 @@ public class Rider extends Thread {
 				int riderId = info[0];
 				int start = info[1];
 				int destination = info[2];
+				System.out.printf("Going to floor %d\n", destination);
 				goToFloor(riderId, start, destination);
 			}
 		} catch (InterruptedException e) {

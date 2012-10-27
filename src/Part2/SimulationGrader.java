@@ -80,6 +80,8 @@ public class SimulationGrader {
 								String elevatorKey = lastElevatorKey.get(elevatorInfo);
 								if (rubric.get(elevatorKey) != 5) {
 									++totalScore;
+									System.out.println(rubric.get(elevatorKey));
+									System.out.println(line);
 								}
 								String lastAction = lastElevatorAction.get(elevatorInfo);
 								Matcher actionMatcher = elevatorRegex.matcher(lastAction);
@@ -93,8 +95,11 @@ public class SimulationGrader {
 						} 
 						String riderInfo = riderMatcher.group();
 						if (scores.keySet().contains(riderInfo)) {
-							if ((rubric.get(key) - scores.get(riderInfo)) != 1) {
+							if ((rubric.get(key) - scores.get(riderInfo)) != 1 
+									&& rubric.get(key) > 0) {
 								++totalScore;
+								System.out.println(key);
+								System.out.println(line);
 							}
 						} 
 						scores.put(riderInfo, rubric.get(key));

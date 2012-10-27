@@ -46,7 +46,7 @@ public class ElevatorSimulator {
 		ArrayList<Rider> riderThreads = new ArrayList<Rider>();
 		
 		for (int i = 0; i < threads; ++i) {
-			System.out.printf("Starting rider %d\n", i);
+			System.out.printf("Starting rider thread %d\n", i);
 			Rider rider = new Rider(building, reader, i);
 			rider.start();
 			riderThreads.add(rider);
@@ -55,7 +55,7 @@ public class ElevatorSimulator {
 		for (int i = 0; i < riderThreads.size(); ++i) {
 			Rider r = riderThreads.get(i);
 			r.join();
-			System.out.printf("Rider %d finished\n", i);
+			System.out.printf("Rider thread %d finished\n", i);
 		}
 		building.closeLog();
 		reader.close();

@@ -13,7 +13,7 @@ public class MyEventBarrier implements EventBarrier{
 	private boolean signaled=false;
 	private int counter=0;
 	private Object lock1 = new Object();
-	private boolean debug = false;
+	private boolean debug = true;
 	
 	
 	private FileWriter logFile;

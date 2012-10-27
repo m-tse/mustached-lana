@@ -9,7 +9,7 @@ import java.io.InputStreamReader;
 
 public class EventSimulator {
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException, InterruptedException {
 		if (args.length == 0) {
 			System.out.println("ERROR: No input file provided!");
 			return;
@@ -34,6 +34,7 @@ public class EventSimulator {
 				TestThread t = new TestThread(barrier, i);
 				t.start();
 			}
+			Thread.sleep(100);
 			gatekeeper = new TestGateKeeper(barrier, index);
 			gatekeeper.watch();
 			++index;

@@ -16,20 +16,21 @@ import Part1.MyEventBarrier;
  */
 
 public class Building {
+	
 	private int floors;
 	
 	ArrayList<Elevator> elevators = new ArrayList<Elevator>();
 	public ArrayList<EventBarrier> exitBarriers = new ArrayList<EventBarrier>();
+	public ArrayList<EventBarrier> enterBarriers = new ArrayList<EventBarrier>();
 	
-	private Object lock;
 	private FileWriter logFile;
 	private PrintWriter logger; 
 
 	public Building(int numFloors, int numElevators, int capacity) throws IOException {
-		lock = new Object();
 		floors = numFloors;
 		for (int i = 0; i < floors; i++) {
 			exitBarriers.add(new MyEventBarrier());
+			enterBarriers.add(new MyEventBarrier());
 		}
 		for (int i = 0; i < numElevators; i++)
 			elevators.add(new Elevator(this, i, capacity));
@@ -63,18 +64,16 @@ public class Building {
 
 	public Elevator AwaitUp(int threadId, int riderId, int floor) throws InterruptedException {
 		this.log("T%d: R%d waits U%d\n", threadId, riderId, floor);
-		EventBarrier upBarrier = exitBarriers.get(floor-1);
+		EventBarrier upBarrier = enterBarriers.get(floor-1);
 		upBarrier.hold();
-		upBarrier.complete();
 		Elevator arrived = this.getElevatorAtFloor(floor);
 		return arrived;
 	}
 	
 	public Elevator AwaitDown(int threadId, int riderId, int floor) throws InterruptedException {
 		this.log("T%d: R%d waits D%d\n", threadId, riderId, floor);
-		EventBarrier downBarrier = exitBarriers.get(floor-1);
+		EventBarrier downBarrier = enterBarriers.get(floor-1);
 		downBarrier.hold();
-		downBarrier.complete();
 		Elevator arrived = this.getElevatorAtFloor(floor);
 		return arrived;
 	}
@@ -93,7 +92,7 @@ public class Building {
 	
 	public void stopElevators() {
 		for (Elevator e: this.elevators) {
-			e.stop();
+			e.stop(); // Need to stop elevators to exit  
 		}
 	}
 
@@ -140,6 +139,10 @@ public class Building {
 			}
 		}
 		return this.elevators.get(index);
+	}
+	
+	public int getNumberFloors() {
+		return this.floors;
 	}
 	
 }
