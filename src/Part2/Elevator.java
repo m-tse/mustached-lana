@@ -189,14 +189,15 @@ public class Elevator extends Thread {
 				this.myBuilding.log("E%d moves down to F%d\n", this.myId, this.currentFloor);
 			}
 			
-			if (currentFloor == floorRequest) {
-				System.out.println("Open 2");
+		
+		}
+		if (currentFloor == floorRequest) {
+			System.out.println("Open 2");
+			OpenDoors();
+		} else if (!this.floorRequests.isEmpty()) {
+			if (this.floorRequests.contains(currentFloor)) {
+				System.out.println("Open 3");
 				OpenDoors();
-			} else if (!this.floorRequests.isEmpty()) {
-				if (this.floorRequests.contains(currentFloor)) {
-					System.out.println("Open 3");
-					OpenDoors();
-				}
 			}
 		}
 		this.currentRequest = -1;
