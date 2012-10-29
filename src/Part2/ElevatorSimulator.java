@@ -55,13 +55,15 @@ public class ElevatorSimulator {
 		for (int i = 0; i < riderThreads.size(); ++i) {
 			Rider r = riderThreads.get(i);
 			r.join();
-			System.out.printf("Rider thread %d finished\n", i);
+			System.out.printf("Rider thread %d %d finished\n", i, r.getId());
 		}
 		building.closeLog();
 		reader.close();
 		data.close();
 		file.close();
 		building.stopElevators();
+		System.out.println("OKAY");
+		return;
 		
 	}
 	

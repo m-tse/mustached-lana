@@ -20,16 +20,15 @@ public class Building {
 	private int floors;
 	
 	ArrayList<Elevator> elevators = new ArrayList<Elevator>();
-	public ArrayList<EventBarrier> exitBarriers = new ArrayList<EventBarrier>();
 	public ArrayList<EventBarrier> enterBarriers = new ArrayList<EventBarrier>();
 	
 	private FileWriter logFile;
 	private PrintWriter logger; 
+	private Elevator lastSignaled;
 
 	public Building(int numFloors, int numElevators, int capacity) throws IOException {
 		floors = numFloors;
 		for (int i = 0; i < floors; i++) {
-			exitBarriers.add(new MyEventBarrier());
 			enterBarriers.add(new MyEventBarrier());
 		}
 		for (int i = 0; i < numElevators; i++)
@@ -50,13 +49,13 @@ public class Building {
 		this.logFile.close();
 	}
 
-	public void CallUp(int id, int rider, int current) {
+	public void CallUp(int id, int rider, int current) throws InterruptedException {
 		this.log("T%d: R%d pushes U%d\n", id, rider, current);
 		Elevator closest = this.findClosestElevator(Elevator.Direction.UP, current);
 		closest.RequestFloor(id, rider, current, true);
 	}
 
-	public void CallDown(int id, int rider, int current) {
+	public void CallDown(int id, int rider, int current) throws InterruptedException {
 		this.log("T%d: R%d pushes D%d\n", id, rider, current);
 		Elevator closest = this.findClosestElevator(Elevator.Direction.DOWN, current);
 		closest.RequestFloor(id, rider, current, true);
@@ -65,34 +64,27 @@ public class Building {
 	public Elevator AwaitUp(int threadId, int riderId, int floor) throws InterruptedException {
 		this.log("T%d: R%d waits U%d\n", threadId, riderId, floor);
 		EventBarrier upBarrier = enterBarriers.get(floor-1);
-		upBarrier.hold();
-		Elevator arrived = this.getElevatorAtFloor(floor);
+//		System.out.printf("AWAITING UP T%d R%d  F%d\n", threadId, riderId, floor);
+//		upBarrier.hold();
+		Elevator arrived = this.lastSignaled;
+		System.out.printf("Done AWAITING UP E%d T%d R%d  F%d\n", arrived.getMyId(),threadId, riderId, floor);
 		return arrived;
 	}
 	
 	public Elevator AwaitDown(int threadId, int riderId, int floor) throws InterruptedException {
 		this.log("T%d: R%d waits D%d\n", threadId, riderId, floor);
 		EventBarrier downBarrier = enterBarriers.get(floor-1);
-		downBarrier.hold();
-		Elevator arrived = this.getElevatorAtFloor(floor);
+//		System.out.printf("AWAITING DOWN T%d R%d  F%d\n", threadId, riderId, floor);
+//		downBarrier.hold();
+		Elevator arrived = this.lastSignaled;
+		System.out.printf("Done AWAITING DOWN E%d T%d R%d  F%d\n", arrived.getMyId(),threadId, riderId, floor);
 		return arrived;
-	}
-
-	public Elevator getElevatorAtFloor(int floor) {
-		for (Elevator e: this.elevators) {
-			if (e.getCurrentFloor() == floor && !e.atCapacity()) {
-				return e;
-			} else if (e.hasRequest(floor)) {
-				e.removeRequest(floor);
-			}
-		}
-		return null;
 	}
 
 	
 	public void stopElevators() {
 		for (Elevator e: this.elevators) {
-			e.stop(); // Need to stop elevators to exit  
+			e.stopElevator();
 		}
 	}
 
@@ -143,6 +135,11 @@ public class Building {
 	
 	public int getNumberFloors() {
 		return this.floors;
+	}
+	
+	public synchronized void setLastSignaled(Elevator e) {
+		this.log("Setting last signaled E%d\n", e.getMyId());
+		this.lastSignaled = e;
 	}
 	
 }

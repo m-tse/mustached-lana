@@ -12,7 +12,6 @@ import java.io.PrintWriter;
 public class MyEventBarrier implements EventBarrier{
 	private boolean signaled=false;
 	private int counter=0;
-	private Object lock1 = new Object();
 	private boolean debug = true;
 	
 	
@@ -30,14 +29,14 @@ public class MyEventBarrier implements EventBarrier{
 	 * it waits for the EventBarrier to change to a signalled state.
 	 */
 	@Override
-	public void hold() throws InterruptedException {
-		synchronized(lock1){
-			counter++;
-			this.log("T%d holding W%d\n", Thread.currentThread().getId(), this.waiters());
-			this.myPrint("Thread registered.  %d waiters\n", waiters());
-		}
+	public synchronized void hold() throws InterruptedException {
+		counter++;
+		this.log("T%d holding W%d\n", Thread.currentThread().getId(), this.waiters());
+		this.myPrint("Thread registered.  %d waiters\n", waiters());
 		while(!signaled){
-			Thread.currentThread().sleep(1);
+			System.out.println("WAITING ON HOLD");
+			this.wait();
+			System.out.println("Done ON HOLD");
 		}
 	}
 
@@ -46,16 +45,21 @@ public class MyEventBarrier implements EventBarrier{
 	 * All waiters become alerted.  
 	 */
 	@Override
-	public void signal() throws InterruptedException {
+	public synchronized void signal() throws InterruptedException {
 		this.myPrint("Signalling all waiters\n");
 		signaled=true;
+		this.notifyAll();
+		this.myPrint("Signalling all waiters\n");
 		this.log("G%s signal ON W%d\n", Thread.currentThread().getId(), this.waiters());
-		while(counter>0){
-			Thread.currentThread().sleep(1);
+		while(counter>0) {
+			System.out.println("WAITING ON SIGNAL");
+			this.wait();
+			System.out.println("Done ON SIGNAL");
 		}
+		this.myPrint("Signalling all waiters\n");
 		signaled=false;
 		this.log("G%s signal OFF W%d\n", Thread.currentThread().getId(), this.waiters());
-		this.myPrint("All threads are complete, I am now unsignaled\n");
+		this.myPrint("All threads are complete, I %d am now unsignaled\n", Thread.currentThread().getId());
 		return;
 	}
 	
@@ -64,14 +68,16 @@ public class MyEventBarrier implements EventBarrier{
 	 * @throws InterruptedException 
 	 */
 	@Override
-	public void complete() throws InterruptedException {
-		synchronized(lock1){
-			this.myPrint("Thread completed.  %d waiters\n", waiters());
-			counter--;
-			this.log("T%d completed W%d\n", Thread.currentThread().getId(), this.waiters());
-		}	
+	public synchronized void complete() throws InterruptedException {
+		this.myPrint("Thread completed.  %d waiters\n", waiters());
+		counter--;
+		this.myPrint("Thread completed now.  %d waiters\n", waiters());
+		this.notifyAll();
+		this.log("T%d completed W%d\n", Thread.currentThread().getId(), this.waiters());
 		while (counter > 0) {
-			Thread.currentThread().sleep(1);
+			System.out.println("WAITING ON COMPLETE");
+			this.wait();
+			System.out.println("Done ON COMPLETE");
 		}
 	}
 	

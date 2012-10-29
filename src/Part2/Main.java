@@ -1,6 +1,6 @@
 package Part2;
-import java.util.PriorityQueue;
-import java.util.Random;
+import java.util.LinkedList;
+import java.util.Queue;
 
 /**
  * Used for testing the elevator
@@ -11,11 +11,15 @@ public class Main {
 	
 	public static final int elevators = 1;
 	public static final int floors = 5;
-	public static PriorityQueue<Integer> hey = new PriorityQueue<Integer>();
+	public static Queue<Integer> hey = new LinkedList<Integer>();
 	
 	public static void main(String[] args) {
 		hey.add(1);
 		hey.add(1);
+		System.out.println(hey.toString());
+		hey.remove(1);
+		System.out.println(hey.toString());
+		hey.remove(1);
 		System.out.println(hey.toString());
 		hey.remove(1);
 		System.out.println(hey.toString());

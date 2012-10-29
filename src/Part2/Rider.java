@@ -46,19 +46,16 @@ public class Rider extends Thread {
 				arrived = this.getElevatorGoingDown(riderId, current, destination);
 				break;
 			case STATIONARY:
-				System.out.println("BOORING");
 				break;
 			}
 		}
-		System.out.printf("ENTERING\n");
+		System.out.printf("ENTERING %d %d\n", this.myId, riderId);
 		arrived.Enter(myId, riderId, current);
-		myBuilding.enterBarriers.get(current-1).complete();
+//		myBuilding.enterBarriers.get(current-1).complete();
 		System.out.printf("EREQUESTIN\n");
 		arrived.RequestFloor(myId, riderId, destination, false);
-		myBuilding.exitBarriers.get(destination-1).hold();
 		System.out.printf("EXITING\n");
 		arrived.Exit(myId, riderId, destination);
-		myBuilding.exitBarriers.get(destination-1).complete();
 
 	}
 	
@@ -76,13 +73,16 @@ public class Rider extends Thread {
 		}
 	}
 	
+	
 	public void run() {
 		String line;
 		try {
 			while(true) {
+				System.out.printf("RIDER THREAD IN %d\n", this.myId);
 				synchronized(lock) {
 					line = this.myInput.readLine();
 					if (line == null) {
+						System.out.println("RIDER THREAD OUT");
 						return;
 					}
 				}		
@@ -92,6 +92,7 @@ public class Rider extends Thread {
 				int destination = info[2];
 				System.out.printf("Going to floor %d\n", destination);
 				goToFloor(riderId, start, destination);
+				System.out.printf("Went to floor on T%d\n", this.getId());
 			}
 		} catch (InterruptedException e) {
 			e.printStackTrace();
