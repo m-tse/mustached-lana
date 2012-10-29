@@ -25,12 +25,10 @@ public class Rider extends Thread {
 	}
 	
 	private Elevator getElevatorGoingUp(int riderId, int current, int destination) throws InterruptedException {
-			myBuilding.CallUp(myId, riderId, current);
 			return myBuilding.AwaitUp(myId, riderId, current);
 	}
 
 	private Elevator getElevatorGoingDown(int riderId, int current, int destination) throws InterruptedException {
-			myBuilding.CallDown(myId, riderId, current);
 			return myBuilding.AwaitDown(myId, riderId, current);
 	}
 
@@ -49,13 +47,17 @@ public class Rider extends Thread {
 				break;
 			}
 		}
+		arrived.ridingBarriers.get(current-1).hold();
+		arrived.ridingBarriers.get(current-1).complete();
 		System.out.printf("ENTERING %d %d\n", this.myId, riderId);
 		arrived.Enter(myId, riderId, current);
 //		myBuilding.enterBarriers.get(current-1).complete();
 		System.out.printf("EREQUESTIN\n");
 		arrived.RequestFloor(myId, riderId, destination, false);
+		arrived.ridingBarriers.get(destination-1).hold();
 		System.out.printf("EXITING\n");
 		arrived.Exit(myId, riderId, destination);
+		arrived.ridingBarriers.get(destination-1).complete();
 
 	}
 	

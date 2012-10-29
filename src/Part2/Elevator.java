@@ -73,6 +73,10 @@ public class Elevator extends Thread {
 	}
 	
 	public synchronized void removeRequest(int floor) {
+		if (this.floorRequests == null) {
+			this.floorRequests = new LinkedList<Integer>();
+			return;
+		}
 		while (this.floorRequests.contains(floor)) {
 			System.out.printf("E%d removing F%d %s\n", this.myId, floor, this.floorRequests.toString());
 			this.floorRequests.remove(floor);
@@ -128,7 +132,6 @@ public class Elevator extends Thread {
 		synchronized(lock1) {
 			riders++;
 		}
-		this.ridingBarriers.get(current-1).complete();
 	}
 	
 	public void Exit(int threadId, int riderId, int floor) throws InterruptedException {
@@ -136,33 +139,29 @@ public class Elevator extends Thread {
 		synchronized (lock1) {
 			riders--;	
 		}
-		this.ridingBarriers.get(floor-1).complete();
 		System.out.println("EXITING elevator");
 	}
 	
 	public void RequestFloor(int threadId, int riderId, int floor, boolean isBuilding) throws InterruptedException{
 		if (!isBuilding) this.myBuilding.log("T%d: R%d pushes E%dB%d\n", threadId, riderId, this.myId, floor);
 		System.out.printf("Requesting F%d on E%d T%d R%d\n",floor, this.myId, threadId, riderId);
-		this.floorRequests.add(floor);
-		this.ridingBarriers.get(floor-1).hold();
-	}
-	
-	private void OpenDoors() { // Needs to synchronize to set lastSignaled Elevator in Building
-		try {
-			this.myBuilding.log("E%d on F%d opens\n", this.myId, this.currentFloor);
-			this.myBuilding.setLastSignaled(this);
-			System.out.printf("E%d Entering barrier F%d\n", this.myId, this.currentFloor);
-			myBuilding.enterBarriers.get(currentFloor-1).signal();
-			System.out.printf("E%d Riding barrier F%d\n", this.myId, this.currentFloor);
-			this.ridingBarriers.get(currentFloor-1).signal();
-			this.removeRequest(this.currentFloor);
-			System.out.printf("E%d Closing doors F%d\n",this.myId, this.currentFloor);
-			CloseDoors();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+		synchronized(lock1) {
+			this.floorRequests.add(floor);
 		}
 	}
 	
+	private void OpenDoors() throws InterruptedException { // Needs to synchronize to set lastSignaled Elevator in Building
+		this.myBuilding.log("E%d on F%d opens\n", this.myId, this.currentFloor);
+		this.myBuilding.setLastSignaled(this);
+		System.out.printf("E%d Entering barrier F%d\n", this.myId, this.currentFloor);
+		myBuilding.enterBarriers.get(currentFloor-1).signal();
+		System.out.printf("E%d Riding barrier F%d\n", this.myId, this.currentFloor);
+		this.ridingBarriers.get(currentFloor-1).signal();
+		this.removeRequest(this.currentFloor);
+		System.out.printf("E%d Closing doors F%d\n",this.myId, this.currentFloor);
+		CloseDoors();
+	}
+
 	private void CloseDoors() {
 		this.myBuilding.log("E%d on F%d closes\n", this.myId, this.currentFloor);
 		return;
@@ -231,9 +230,6 @@ public class Elevator extends Thread {
 		return this.myId;
 	}
 
-	public void waitForDestinationFloor(int destinationFloor) throws InterruptedException {
-		this.ridingBarriers.get(destinationFloor-1).hold();
-	}
 	
 
 }
