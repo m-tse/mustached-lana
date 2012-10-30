@@ -46,7 +46,6 @@ public class Rider extends Thread {
 				break;
 			}
 		}
-		arrived.ridingBarriers.get(current-1).hold();
 		arrived.Enter(myId, riderId, current);
 		arrived.ridingBarriers.get(current-1).complete();
 		arrived.RequestFloor(myId, riderId, destination, false);

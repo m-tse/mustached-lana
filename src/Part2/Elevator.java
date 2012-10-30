@@ -31,7 +31,7 @@ public class Elevator extends Thread {
 	private int currentFloor;
 	private int currentRequest;
 	private int capacity;
-	public ArrayList<EventBarrier> ridingBarriers;
+	public ArrayList<MyEventBarrier> ridingBarriers;
 	
 	/**
 	 * Floor requests are implemented in a queue
@@ -48,7 +48,7 @@ public class Elevator extends Thread {
 		this.currentFloor = -1;
 		this.currentRequest = -1;
 		this.capacity = capacity;
-		this.ridingBarriers = new ArrayList<EventBarrier>();
+		this.ridingBarriers = new ArrayList<MyEventBarrier>();
 		for (int n = 0; n < this.myBuilding.getNumberFloors(); ++n) {
 			this.ridingBarriers.add(new MyEventBarrier());
 		}
@@ -76,13 +76,8 @@ public class Elevator extends Thread {
 		return this.floorRequests.size();
 	}
 	
-	public synchronized void removeRequest(int floor) {
-		if (this.floorRequests == null) {
-			// For some reason it sometimes goes null?
-			this.floorRequests = new LinkedList<Integer>();
-			return;
-		}
-		while (this.floorRequests.contains(floor)) {
+	public synchronized void removeRequest(int floor, boolean rem) {
+		if (this.floorRequests.contains(floor) && !rem) {
 			this.floorRequests.remove(floor);
 		}
 	}
@@ -100,6 +95,15 @@ public class Elevator extends Thread {
 		}
 		return false;
 	}
+	
+	private void checkBarriers() {
+		for (int i = 0; i < this.ridingBarriers.size(); i++) {
+			if (this.ridingBarriers.get(i).waiters() > 0) {
+				this.floorRequests.add(i);
+			}
+		}
+	}
+	
 	
 	private synchronized void getNextRequest() {
 		if(!floorRequests.isEmpty() && floorRequests != null){
@@ -140,6 +144,7 @@ public class Elevator extends Thread {
 		synchronized(lock1) {
 			riders++;
 		}
+		this.ridingBarriers.get(current-1).decrementIntended();
 	}
 	
 	public void Exit(int threadId, int riderId, int floor) throws InterruptedException {
@@ -156,22 +161,24 @@ public class Elevator extends Thread {
 		}
 	}
 	
-	private void OpenDoors() throws InterruptedException { // Needs to synchronize to set lastSignaled Elevator in Building
+	private void OpenDoors(boolean rem) throws InterruptedException { // Needs to synchronize to set lastSignaled Elevator in Building
 		this.myBuilding.log("E%d on F%d opens\n", this.myId, this.currentFloor);
-		myBuilding.enterBarriers.get(currentFloor-1).signal();
+//		myBuilding.enterBarriers.get(currentFloor-1).signal();
+		
+		this.ridingBarriers.get(this.currentFloor-1).prehold();
 		this.ridingBarriers.get(currentFloor-1).signal();
-		this.removeRequest(this.currentFloor);
-		CloseDoors();
+		CloseDoors(rem);
 	}
 
-	private void CloseDoors() {
+	private synchronized void CloseDoors(boolean rem) {
 		this.myBuilding.log("E%d on F%d closes\n", this.myId, this.currentFloor);
+//		this.removeRequest(this.currentFloor, rem);
 		return;
 	}
 	
 	private void VisitFloor(int floorRequest) throws InterruptedException{
 		if (currentFloor == floorRequest) {
-			OpenDoors();
+			OpenDoors(false);
 			this.currentRequest = -1;
 			return;
 		}
@@ -182,22 +189,22 @@ public class Elevator extends Thread {
 			sleep(elevatorTime);
 			if(this.direction == Direction.UP) {
 				currentFloor++;
-				this.myBuilding.log("E%d moves up to F%d\n", this.myId, this.currentFloor);
+//				this.myBuilding.log("E%d moves up to F%d\n", this.myId, this.currentFloor);
 			}
 			else if(this.direction == Direction.DOWN) {
 				currentFloor--;
-				this.myBuilding.log("E%d moves down to F%d\n", this.myId, this.currentFloor);
+//				this.myBuilding.log("E%d moves down to F%d\n", this.myId, this.currentFloor);
 			}
-			
+			if (currentFloor == floorRequest) {
+				OpenDoors(false);
+			} else if (!this.floorRequests.isEmpty()) {
+				if (this.floorRequests.contains(currentFloor)) {
+					OpenDoors(true);
+				}
+			}
 		
 		}
-		if (currentFloor == floorRequest) {
-			OpenDoors();
-		} else if (!this.floorRequests.isEmpty()) {
-			if (this.floorRequests.contains(currentFloor)) {
-				OpenDoors();
-			}
-		}
+		
 		this.currentRequest = -1;
 		return;
 	}

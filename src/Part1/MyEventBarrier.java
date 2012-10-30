@@ -12,6 +12,7 @@ import java.io.PrintWriter;
 public class MyEventBarrier implements EventBarrier{
 	private boolean signaled=false;
 	private int counter=0;
+	private int intendedWaiters = 0;
 	private boolean debug = false;
 	
 	
@@ -23,6 +24,12 @@ public class MyEventBarrier implements EventBarrier{
 		this.logger = new PrintWriter(logFile);
 	}
 	
+	public void prehold() throws InterruptedException {
+		while (this.intendedWaiters > this.waiters()) {
+			Thread.sleep(100);
+		}
+//		this.intendedWaiters = -1;
+	}
 	
 	/**
 	 * A waiter thread calls this method to register to the EventBarrier, 
@@ -47,12 +54,10 @@ public class MyEventBarrier implements EventBarrier{
 		this.myPrint("Signalling all waiters\n");
 		signaled=true;
 		this.notifyAll();
-		this.myPrint("Signalling all waiters\n");
 		this.log("G%s signal ON W%d\n", Thread.currentThread().getId(), this.waiters());
 		while(counter>0) {
 			this.wait();
 		}
-		this.myPrint("Signalling all waiters\n");
 		signaled=false;
 		this.log("G%s signal OFF W%d\n", Thread.currentThread().getId(), this.waiters());
 		this.myPrint("All threads are complete, I T%d am now unsignaled\n", Thread.currentThread().getId());
@@ -65,7 +70,6 @@ public class MyEventBarrier implements EventBarrier{
 	 */
 	@Override
 	public synchronized void complete() throws InterruptedException {
-		this.myPrint("Thread completed.  %d waiters\n", waiters());
 		counter--;
 		this.myPrint("Thread completed now.  %d waiters\n", waiters());
 		this.notifyAll();
@@ -92,6 +96,22 @@ public class MyEventBarrier implements EventBarrier{
 		this.logger.close();
 		this.logFile.close();
 	}	
+	
+	public void incrementIntended() {
+//		if (this.intendedWaiters == -1) {
+//			this.intendedWaiters++;
+//		}
+		this.intendedWaiters++;
+	}
+	
+	public void decrementIntended() {
+		this.intendedWaiters--;
+	}
+	
+	public int getIntendedWaiters() {
+		return this.intendedWaiters;
+	}
+	
 	
 	
 	/**
