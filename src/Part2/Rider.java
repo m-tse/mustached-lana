@@ -34,7 +34,6 @@ public class Rider extends Thread {
 
 	private void rideElevator(Elevator.Direction direction, int riderId, int current, int destination) throws InterruptedException {
 		Elevator arrived = null;
-		System.out.printf("Riding %s from %d to floor %d\n", direction.toString(), current, destination);
 		while (arrived == null) {
 			switch (direction) {
 			case UP:
@@ -48,21 +47,16 @@ public class Rider extends Thread {
 			}
 		}
 		arrived.ridingBarriers.get(current-1).hold();
-		arrived.ridingBarriers.get(current-1).complete();
-		System.out.printf("ENTERING %d %d\n", this.myId, riderId);
 		arrived.Enter(myId, riderId, current);
-//		myBuilding.enterBarriers.get(current-1).complete();
-		System.out.printf("EREQUESTIN\n");
+		arrived.ridingBarriers.get(current-1).complete();
 		arrived.RequestFloor(myId, riderId, destination, false);
 		arrived.ridingBarriers.get(destination-1).hold();
-		System.out.printf("EXITING\n");
 		arrived.Exit(myId, riderId, destination);
 		arrived.ridingBarriers.get(destination-1).complete();
 
 	}
 	
 	private void goToFloor(int riderId, int current, int destination) throws InterruptedException{
-		Elevator arrived = null;
 		if(destination==current) {
 			this.myBuilding.log("T%d: NO-OP R%d S%d D%d\n", this.myId, riderId, current, destination);
 			return;
@@ -80,11 +74,9 @@ public class Rider extends Thread {
 		String line;
 		try {
 			while(true) {
-				System.out.printf("RIDER THREAD IN %d\n", this.myId);
 				synchronized(lock) {
 					line = this.myInput.readLine();
 					if (line == null) {
-						System.out.println("RIDER THREAD OUT");
 						return;
 					}
 				}		
@@ -92,9 +84,7 @@ public class Rider extends Thread {
 				int riderId = info[0];
 				int start = info[1];
 				int destination = info[2];
-				System.out.printf("Going to floor %d\n", destination);
 				goToFloor(riderId, start, destination);
-				System.out.printf("Went to floor on T%d\n", this.getId());
 			}
 		} catch (InterruptedException e) {
 			e.printStackTrace();

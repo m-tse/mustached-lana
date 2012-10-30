@@ -12,7 +12,7 @@ import java.io.PrintWriter;
 public class MyEventBarrier implements EventBarrier{
 	private boolean signaled=false;
 	private int counter=0;
-	private boolean debug = true;
+	private boolean debug = false;
 	
 	
 	private FileWriter logFile;
@@ -34,9 +34,7 @@ public class MyEventBarrier implements EventBarrier{
 		this.log("T%d holding W%d\n", Thread.currentThread().getId(), this.waiters());
 		this.myPrint("Thread registered.  %d waiters\n", waiters());
 		while(!signaled){
-			System.out.println("WAITING ON HOLD");
 			this.wait();
-			System.out.println("Done ON HOLD");
 		}
 	}
 
@@ -52,14 +50,12 @@ public class MyEventBarrier implements EventBarrier{
 		this.myPrint("Signalling all waiters\n");
 		this.log("G%s signal ON W%d\n", Thread.currentThread().getId(), this.waiters());
 		while(counter>0) {
-			System.out.println("WAITING ON SIGNAL");
 			this.wait();
-			System.out.println("Done ON SIGNAL");
 		}
 		this.myPrint("Signalling all waiters\n");
 		signaled=false;
 		this.log("G%s signal OFF W%d\n", Thread.currentThread().getId(), this.waiters());
-		this.myPrint("All threads are complete, I %d am now unsignaled\n", Thread.currentThread().getId());
+		this.myPrint("All threads are complete, I T%d am now unsignaled\n", Thread.currentThread().getId());
 		return;
 	}
 	
@@ -75,9 +71,7 @@ public class MyEventBarrier implements EventBarrier{
 		this.notifyAll();
 		this.log("T%d completed W%d\n", Thread.currentThread().getId(), this.waiters());
 		while (counter > 0) {
-			System.out.println("WAITING ON COMPLETE");
 			this.wait();
-			System.out.println("Done ON COMPLETE");
 		}
 	}
 	

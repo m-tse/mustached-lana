@@ -21,15 +21,16 @@ public class EventSimulator {
 		DataInputStream data = new DataInputStream(file);
 		BufferedReader reader = new BufferedReader(new InputStreamReader(data));
 		
+		System.out.println("");
+		System.out.println("Running simulation...");
+		
 		String line; // First line format: Floors, Elevators, Riders, Threads, Capacity
 		int threads;
 		MyEventBarrier barrier = new MyEventBarrier();
-		TestThread thread;
 		TestGateKeeper gatekeeper;
 		int index = 0;
 		while ((line = reader.readLine()) != null) {
 			threads = Integer.parseInt(line);
-			System.out.println(threads);
 			for (int i = 0; i < threads; ++i) {
 				TestThread t = new TestThread(barrier, i);
 				t.start();
@@ -38,12 +39,19 @@ public class EventSimulator {
 			gatekeeper = new TestGateKeeper(barrier, index);
 			gatekeeper.watch();
 			++index;
-			System.out.println("WATCHING");	
 		}
-			
 		
-		System.out.println(Thread.activeCount());
+		reader.close();
+		data.close();
+		file.close();
 		barrier.closeLog();
+		
+		System.out.println("");
+		System.out.println("-------------------");
+		System.out.println("Simulation finished");
+		System.out.println("Examine Event.log");
+		System.out.println("-------------------");
+		System.out.println("");
 		return;
 		
 		

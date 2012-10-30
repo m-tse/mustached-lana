@@ -24,7 +24,6 @@ public class Building {
 	
 	private FileWriter logFile;
 	private PrintWriter logger; 
-	private Elevator lastSignaled;
 
 	public Building(int numFloors, int numElevators, int capacity) throws IOException {
 		floors = numFloors;
@@ -64,35 +63,17 @@ public class Building {
 	}
 
 	public Elevator AwaitUp(int threadId, int riderId, int floor) throws InterruptedException {
-		this.log("T%d: R%d waits U%d\n", threadId, riderId, floor);
-		EventBarrier upBarrier = enterBarriers.get(floor-1);
-//		System.out.printf("AWAITING UP T%d R%d  F%d\n", threadId, riderId, floor);
-//		upBarrier.hold();
 		Elevator arrived = this.CallUp(threadId, riderId, floor);
-//		Elevator arrived = this.lastSignaled;
-		System.out.printf("Done AWAITING UP E%d T%d R%d  F%d\n", arrived.getMyId(),threadId, riderId, floor);
+		this.log("T%d: R%d waits U%d\n", threadId, riderId, floor);
 		return arrived;
 	}
 	
 	public Elevator AwaitDown(int threadId, int riderId, int floor) throws InterruptedException {
-		this.log("T%d: R%d waits D%d\n", threadId, riderId, floor);
-		EventBarrier downBarrier = enterBarriers.get(floor-1);
-//		System.out.printf("AWAITING DOWN T%d R%d  F%d\n", threadId, riderId, floor);
-//		downBarrier.hold();
 		Elevator arrived = this.CallDown(threadId, riderId, floor);
-//		Elevator arrived = this.lastSignaled;
-		System.out.printf("Done AWAITING DOWN E%d T%d R%d  F%d\n", arrived.getMyId(),threadId, riderId, floor);
+		this.log("T%d: R%d waits D%d\n", threadId, riderId, floor);
 		return arrived;
 	}
 
-	
-	public void stopElevators() {
-		for (Elevator e: this.elevators) {
-			e.stopElevator();
-		}
-	}
-
-	
 	/*
 	 *	Finds the closest elevator, closest floor same direction 
 	 *	If there are no elevators with correct direction, poll the one with lowest requests
@@ -141,9 +122,9 @@ public class Building {
 		return this.floors;
 	}
 	
-	public synchronized void setLastSignaled(Elevator e) {
-		this.log("Setting last signaled E%d\n", e.getMyId());
-		this.lastSignaled = e;
+	public void stopElevators() {
+		for (Elevator e: this.elevators) {
+			e.stopElevator();
+		}
 	}
-	
 }
