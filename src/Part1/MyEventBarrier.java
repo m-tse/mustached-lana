@@ -28,7 +28,6 @@ public class MyEventBarrier implements EventBarrier{
 		while (this.intendedWaiters > this.waiters()) {
 			Thread.sleep(100);
 		}
-//		this.intendedWaiters = -1;
 	}
 	
 	/**
