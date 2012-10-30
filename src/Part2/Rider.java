@@ -3,7 +3,6 @@ package Part2;
 import java.io.BufferedReader;
 import java.io.IOException;
 
-import Part2.Elevator.Direction;
 
 /**
  * Thread class representing a Rider.  Riders play the "minstrels" role in the lab description.
@@ -24,27 +23,17 @@ public class Rider extends Thread {
 		myId = id;
 	}
 	
-	private Elevator getElevatorGoingUp(int riderId, int current, int destination) throws InterruptedException {
-			return myBuilding.AwaitUp(myId, riderId, current);
-	}
-
-	private Elevator getElevatorGoingDown(int riderId, int current, int destination) throws InterruptedException {
-			return myBuilding.AwaitDown(myId, riderId, current);
-	}
-
-	private void rideElevator(Elevator.Direction direction, int riderId, int current, int destination) throws InterruptedException {
+	private void goToFloor(int riderId, int current, int destination) throws InterruptedException{
 		Elevator arrived = null;
-		while (arrived == null) {
-			switch (direction) {
-			case UP:
-				arrived = this.getElevatorGoingUp(riderId, current, destination);
-				break;
-			case DOWN:
-				arrived = this.getElevatorGoingDown(riderId, current, destination);
-				break;
-			case STATIONARY:
-				break;
-			}
+		if(destination==current) {
+			this.myBuilding.log("T%d: NO-OP R%d S%d D%d\n", this.myId, riderId, current, destination);
+			return;
+		}
+		else if(destination>current){ //going up
+			arrived = this.myBuilding.AwaitUp(myId, riderId, current);
+		}
+		else if(destination<current){ //going down
+			arrived = this.myBuilding.AwaitDown(myId, riderId, current);
 		}
 		arrived.Enter(myId, riderId, current);
 		arrived.ridingBarriers.get(current-1).complete();
@@ -52,20 +41,6 @@ public class Rider extends Thread {
 		arrived.ridingBarriers.get(destination-1).hold();
 		arrived.Exit(myId, riderId, destination);
 		arrived.ridingBarriers.get(destination-1).complete();
-
-	}
-	
-	private void goToFloor(int riderId, int current, int destination) throws InterruptedException{
-		if(destination==current) {
-			this.myBuilding.log("T%d: NO-OP R%d S%d D%d\n", this.myId, riderId, current, destination);
-			return;
-		}
-		else if(destination>current){ //going up
-			this.rideElevator(Direction.UP, riderId, current, destination);
-		}
-		else if(destination<current){ //going down
-			this.rideElevator(Direction.DOWN, riderId, current, destination);
-		}
 	}
 	
 	

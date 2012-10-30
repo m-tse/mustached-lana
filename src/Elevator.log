@@ -1,166 +1,196 @@
 T0: R1 pushes U1
 T2: R3 pushes D3
+T2: R3 waits D3
+T0: R1 waits U1
 T1: R2 pushes U2
 T1: R2 waits U2
-T0: R1 waits U1
-T2: R3 waits D3
 E1 on F2 opens
 T1: R2 enters E1 on F2
 T1: R2 pushes E1B4
 E1 on F2 closes
+E1 moves up to F3
+E0 moves down to F1
 E0 on F1 opens
 T0: R1 enters E0 on F1
 T0: R1 pushes E0B3
 E0 on F1 closes
-E1 on F4 opens
-T1: R2 exits E1 on F4
-T1: R4 pushes U2
-T1: R4 waits U2
-E1 on F4 closes
+E0 moves up to F2
+E0 moves up to F3
 E0 on F3 opens
 T0: R1 exits E0 on F3
 T2: R3 enters E0 on F3
 T2: R3 pushes E0B1
-T0: R5 pushes U1
-T0: R5 waits U1
-E0 on F3 closes
-E0 on F3 opens
-E0 on F3 closes
-E1 on F2 opens
-T1: R4 enters E1 on F2
-T1: R4 pushes E1B3
-E1 on F2 closes
-E0 on F1 opens
-T2: R3 exits E0 on F1
-T2: R6 pushes D4
-T2: R6 waits D4
-E0 on F1 closes
-E1 on F1 opens
-T0: R5 enters E1 on F1
-T0: R5 pushes E1B2
-E1 on F1 closes
-E0 on F4 opens
-T2: R6 enters E0 on F4
-T2: R6 pushes E0B2
-E0 on F4 closes
-E1 on F2 opens
-T0: R5 exits E1 on F2
-T0: R7 pushes D3
-T0: R7 waits D3
-E1 on F2 closes
-E0 on F3 opens
-T0: R7 enters E0 on F3
-T0: R7 pushes E0B2
-E0 on F3 closes
-E1 on F3 opens
-T1: R4 exits E1 on F3
-T1: R8 pushes D4
-E1 on F3 closes
-T1: R8 waits D4
-E0 on F2 opens
-T0: R7 exits E0 on F2
-T2: R6 exits E0 on F2
-T2: R9 pushes D2
-T2: R9 waits D2
-E0 on F2 closes
-T0: R1 pushes U2
-T0: R1 waits U2
-E0 on F3 opens
-E0 on F3 closes
-E0 on F2 opens
-E0 on F2 closes
-E1 on F2 opens
-T0: R1 enters E1 on F2
-T2: R9 enters E1 on F2
-T2: R9 pushes E1B1
-T0: R1 pushes E1B3
-E1 on F2 closes
-E1 on F3 opens
-T0: R1 exits E1 on F3
-T0: R2 pushes U2
-T0: R2 waits U2
-E1 on F3 closes
-E0 on F2 opens
-T0: R2 enters E0 on F2
-T0: R2 pushes E0B4
-E0 on F2 closes
-E1 on F4 opens
-T1: R8 enters E1 on F4
-T1: R8 pushes E1B1
-E1 on F4 closes
-E0 on F4 opens
-T0: R2 exits E0 on F4
-T0: NO-OP R3 S3 D3
-E0 on F4 closes
 T0: R4 pushes U2
 T0: R4 waits U2
-E1 on F3 opens
-E1 on F3 closes
+E0 on F3 closes
+E0 on F3 opens
+E0 on F3 closes
+E0 moves down to F2
+E1 moves up to F4
+E1 on F4 opens
+T1: R2 exits E1 on F4
+T1: R5 pushes U1
+T1: R5 waits U1
+E1 on F4 closes
+E0 moves down to F1
+E0 on F1 opens
+T1: R5 enters E0 on F1
+T2: R3 exits E0 on F1
+T2: R6 pushes D4
+T1: R5 pushes E0B2
+T2: R6 waits D4
+E0 on F1 closes
+E0 on F1 opens
+E0 on F1 closes
+E0 moves up to F2
+E0 on F2 opens
+T1: R5 exits E0 on F2
+T1: R7 pushes D3
+E0 on F2 closes
+T1: R7 waits D3
+E1 moves down to F3
+E0 moves up to F3
+E0 on F3 opens
+T1: R7 enters E0 on F3
+T1: R7 pushes E0B2
+E0 on F3 closes
+E1 moves down to F2
 E1 on F2 opens
 T0: R4 enters E1 on F2
 T0: R4 pushes E1B3
 E1 on F2 closes
-E1 on F2 opens
-E1 on F2 closes
-E1 on F1 opens
-T1: R8 exits E1 on F1
-T2: R9 exits E1 on F1
-T2: R5 pushes D4
-T1: R6 pushes D4
-T1: R6 waits D4
-T2: R5 waits D4
-E1 on F1 closes
-E0 on F4 opens
-T2: R5 enters E0 on F4
-T1: R6 enters E0 on F4
-T1: R6 pushes E0B3
-E0 on F4 closes
-E0 on F4 opens
-T2: R5 pushes E0B2
-E0 on F4 closes
-E1 on F2 opens
-E1 on F2 closes
-E0 on F3 opens
-T1: R6 exits E0 on F3
-T1: R7 pushes D3
-E0 on F3 closes
-T1: R7 waits D3
+E1 moves up to F3
 E1 on F3 opens
-T1: R7 enters E1 on F3
 T0: R4 exits E1 on F3
 T0: R8 pushes D4
 E1 on F3 closes
-T1: R7 pushes E1B2
 T0: R8 waits D4
-E1 on F2 opens
-T1: R7 exits E1 on F2
+E0 moves down to F2
+E0 on F2 opens
+T1: R7 exits E0 on F2
 T1: R9 pushes D2
+E0 on F2 closes
+E0 on F2 opens
 T1: R9 waits D2
-E1 on F2 closes
-E0 on F2 opens
-T1: R9 enters E0 on F2
-T2: R5 exits E0 on F2
-E0 on F2 closes
-E0 on F2 opens
-T1: R9 pushes E0B1
-E0 on F2 closes
-E0 on F1 opens
-T1: R9 exits E0 on F1
-E0 on F1 closes
-E1 on F1 opens
-E1 on F1 closes
-E1 on F2 opens
-E1 on F2 closes
-E1 on F3 opens
-E1 on F3 closes
-E1 on F3 opens
-E1 on F3 closes
+E1 moves up to F4
 E1 on F4 opens
 T0: R8 enters E1 on F4
+T2: R6 enters E1 on F4
+T2: R6 pushes E1B2
 T0: R8 pushes E1B1
 E1 on F4 closes
+E1 moves down to F3
+E1 on F3 opens
+E1 on F3 closes
+E1 moves up to F4
+E1 on F4 opens
+E1 on F4 closes
+E1 moves down to F3
+T1: R9 enters E0 on F2
+T1: R9 pushes E0B1
+E0 on F2 closes
+E1 moves down to F2
 E1 on F2 opens
+T2: R6 exits E1 on F2
+T2: R1 pushes U2
 E1 on F2 closes
+T2: R1 waits U2
+E1 moves down to F1
 E1 on F1 opens
 T0: R8 exits E1 on F1
+T0: R2 pushes U2
+E1 on F1 closes
+T0: R2 waits U2
+E0 moves down to F1
+E0 on F1 opens
+T1: R9 exits E0 on F1
+T1: NO-OP R3 S3 D3
+E0 on F1 closes
+T1: R4 pushes U2
+T1: R4 waits U2
+E1 moves up to F2
+E1 on F2 opens
+T0: R2 enters E1 on F2
+T0: R2 pushes E1B4
+E1 on F2 closes
+E0 moves up to F2
+E0 on F2 opens
+T1: R4 enters E0 on F2
+T2: R1 enters E0 on F2
+T2: R1 pushes E0B3
+E0 on F2 closes
+E0 on F2 opens
+T1: R4 pushes E0B3
+E0 on F2 closes
+E1 moves up to F3
+E1 moves up to F4
+E1 on F4 opens
+T0: R2 exits E1 on F4
+T0: R5 pushes D4
+T0: R5 waits D4
+E1 on F4 closes
+E0 moves up to F3
+E0 on F3 opens
+T1: R4 exits E0 on F3
+T2: R1 exits E0 on F3
+T2: R6 pushes D4
+T1: R7 pushes D3
+T1: R7 waits D3
+T2: R6 waits D4
+E0 on F3 closes
+E0 on F3 opens
+E0 on F3 closes
+E1 moves up to F3
+E1 on F3 opens
+T1: R7 enters E1 on F3
+T1: R7 pushes E1B2
+E1 on F3 closes
+E0 moves up to F4
+E0 on F4 opens
+T2: R6 enters E0 on F4
+T0: R5 enters E0 on F4
+T0: R5 pushes E0B2
+T2: R6 pushes E0B3
+E0 on F4 closes
+E0 on F4 opens
+E0 on F4 closes
+E1 moves down to F2
+E1 on F2 opens
+T1: R7 exits E1 on F2
+T1: R8 pushes D4
+T1: R8 waits D4
+E1 on F2 closes
+E0 moves down to F3
+E0 on F3 opens
+T2: R6 exits E0 on F3
+T2: R9 pushes D2
+T2: R9 waits D2
+E0 on F3 closes
+E0 moves down to F2
+E0 on F2 opens
+T2: R9 enters E0 on F2
+T0: R5 exits E0 on F2
+E0 on F2 closes
+T2: R9 pushes E0B1
+E1 moves up to F3
+E0 moves up to F3
+E0 on F3 opens
+E0 on F3 closes
+E1 moves up to F4
+E1 on F4 opens
+T1: R8 enters E1 on F4
+T1: R8 pushes E1B1
+E1 on F4 closes
+E0 moves down to F2
+E0 on F2 opens
+E0 on F2 closes
+E1 moves down to F3
+E1 moves down to F2
+E0 moves down to F1
+E0 on F1 opens
+T2: R9 exits E0 on F1
+E0 on F1 closes
+E1 moves down to F1
+E1 on F1 opens
+T1: R8 exits E1 on F1
 E1 on F1 closes

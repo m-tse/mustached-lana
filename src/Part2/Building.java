@@ -20,16 +20,12 @@ public class Building {
 	private int floors;
 	
 	ArrayList<Elevator> elevators = new ArrayList<Elevator>();
-	public ArrayList<EventBarrier> enterBarriers = new ArrayList<EventBarrier>();
 	
 	private FileWriter logFile;
 	private PrintWriter logger; 
 
 	public Building(int numFloors, int numElevators, int capacity) throws IOException {
 		floors = numFloors;
-		for (int i = 0; i < floors; i++) {
-			enterBarriers.add(new MyEventBarrier());
-		}
 		for (int i = 0; i < numElevators; i++)
 			elevators.add(new Elevator(this, i, capacity));
 		for (Elevator e : elevators)
