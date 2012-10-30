@@ -24,35 +24,31 @@ public class Rider extends Thread {
 		myId = id;
 	}
 	
-	private Elevator getElevatorGoingUp(int riderId, int current, int destination) throws InterruptedException {
+	private synchronized Elevator getElevatorGoingUp(int riderId, int current, int destination) throws InterruptedException {
+			myBuilding.CallUp(this.myId, riderId, current);
 			return myBuilding.AwaitUp(myId, riderId, current);
 	}
 
-	private Elevator getElevatorGoingDown(int riderId, int current, int destination) throws InterruptedException {
+	private synchronized Elevator getElevatorGoingDown(int riderId, int current, int destination) throws InterruptedException {
+			myBuilding.CallDown(this.myId, riderId, current);
 			return myBuilding.AwaitDown(myId, riderId, current);
 	}
 
 	private void rideElevator(Elevator.Direction direction, int riderId, int current, int destination) throws InterruptedException {
 		Elevator arrived = null;
-		while (arrived == null) {
-			switch (direction) {
-			case UP:
-				arrived = this.getElevatorGoingUp(riderId, current, destination);
-				break;
-			case DOWN:
-				arrived = this.getElevatorGoingDown(riderId, current, destination);
-				break;
-			case STATIONARY:
-				break;
-			}
+		switch (direction) {
+		case UP:
+			arrived = this.getElevatorGoingUp(riderId, current, destination);
+			break;
+		case DOWN:
+			arrived = this.getElevatorGoingDown(riderId, current, destination);
+			break;
+		case STATIONARY:
+			break;
 		}
-		arrived.ridingBarriers.get(current-1).hold();
 		arrived.Enter(myId, riderId, current);
-		arrived.ridingBarriers.get(current-1).complete();
 		arrived.RequestFloor(myId, riderId, destination, false);
-		arrived.ridingBarriers.get(destination-1).hold();
 		arrived.Exit(myId, riderId, destination);
-		arrived.ridingBarriers.get(destination-1).complete();
 
 	}
 	

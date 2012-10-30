@@ -12,7 +12,7 @@ import java.io.PrintWriter;
 public class MyEventBarrier implements EventBarrier{
 	private boolean signaled=false;
 	private int counter=0;
-	private boolean debug = false;
+	private boolean debug = true;
 	
 	
 	private FileWriter logFile;
@@ -47,12 +47,10 @@ public class MyEventBarrier implements EventBarrier{
 		this.myPrint("Signalling all waiters\n");
 		signaled=true;
 		this.notifyAll();
-		this.myPrint("Signalling all waiters\n");
 		this.log("G%s signal ON W%d\n", Thread.currentThread().getId(), this.waiters());
 		while(counter>0) {
 			this.wait();
 		}
-		this.myPrint("Signalling all waiters\n");
 		signaled=false;
 		this.log("G%s signal OFF W%d\n", Thread.currentThread().getId(), this.waiters());
 		this.myPrint("All threads are complete, I T%d am now unsignaled\n", Thread.currentThread().getId());
@@ -100,6 +98,7 @@ public class MyEventBarrier implements EventBarrier{
 	public void myPrint(String format, Object... args) {
 		if (this.debug) {
 			System.out.printf(format, args);
+			System.out.printf("T%d\n", Thread.currentThread().getId());
 		}
 	}
 	

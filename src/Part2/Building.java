@@ -24,6 +24,7 @@ public class Building {
 	
 	private FileWriter logFile;
 	private PrintWriter logger; 
+	private Elevator lastSignaled;
 
 	public Building(int numFloors, int numElevators, int capacity) throws IOException {
 		floors = numFloors;
@@ -48,30 +49,32 @@ public class Building {
 		this.logFile.close();
 	}
 
-	public Elevator CallUp(int id, int rider, int current) throws InterruptedException {
+	public void CallUp(int id, int rider, int current) throws InterruptedException {
 		this.log("T%d: R%d pushes U%d\n", id, rider, current);
 		Elevator closest = this.findClosestElevator(Elevator.Direction.UP, current);
 		closest.RequestFloor(id, rider, current, true);
-		return closest;
 	}
 
-	public Elevator CallDown(int id, int rider, int current) throws InterruptedException {
+	public void CallDown(int id, int rider, int current) throws InterruptedException {
 		this.log("T%d: R%d pushes D%d\n", id, rider, current);
 		Elevator closest = this.findClosestElevator(Elevator.Direction.DOWN, current);
 		closest.RequestFloor(id, rider, current, true);
-		return closest;
 	}
 
 	public Elevator AwaitUp(int threadId, int riderId, int floor) throws InterruptedException {
-		Elevator arrived = this.CallUp(threadId, riderId, floor);
 		this.log("T%d: R%d waits U%d\n", threadId, riderId, floor);
+		Elevator arrived = this.lastSignaled;
+		arrived.ridingBarriers.get(floor-1).hold();
+		arrived.ridingBarriers.get(floor-1).complete();
 		return arrived;
 	}
 	
 	public Elevator AwaitDown(int threadId, int riderId, int floor) throws InterruptedException {
-		Elevator arrived = this.CallDown(threadId, riderId, floor);
 		this.log("T%d: R%d waits D%d\n", threadId, riderId, floor);
-		return arrived;
+		Elevator arrived = this.lastSignaled;
+		arrived.ridingBarriers.get(floor-1).hold();
+		arrived.ridingBarriers.get(floor-1).complete();
+		return this.lastSignaled;
 	}
 
 	/*
@@ -126,5 +129,9 @@ public class Building {
 		for (Elevator e: this.elevators) {
 			e.stopElevator();
 		}
+	}
+	
+	public void setLastSignaledElevator(Elevator e) {
+		this.lastSignaled = e;
 	}
 }
