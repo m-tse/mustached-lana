@@ -131,10 +131,11 @@ Overview of Elevator System
     The Building instance variables:
         - int floors
         - ArrayList<Elevator> elevators
-        - ArrayList<EventBarrier> entryBarriers
+        - ArrayList<EventBarrier> enterBarriers
     
     Elevator instance variables:
         - Building myBuilding
+        - ArrayList<EventBarrier> ridingBarriers
         - Queue<Integer> floorRequests
         - Direction direction /* this is an enum defined in Elevator
                                 can be UP, DOWN, or STATIONARY */
