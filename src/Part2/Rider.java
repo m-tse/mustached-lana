@@ -23,29 +23,22 @@ public class Rider extends Thread {
 		myInput = input;
 		myId = id;
 	}
-	
-	private Elevator getElevatorGoingUp(int riderId, int current, int destination) throws InterruptedException {
-			return myBuilding.AwaitUp(myId, riderId, current);
-	}
 
-	private Elevator getElevatorGoingDown(int riderId, int current, int destination) throws InterruptedException {
-			return myBuilding.AwaitDown(myId, riderId, current);
-	}
 
-	private void rideElevator(Elevator.Direction direction, int riderId, int current, int destination) throws InterruptedException {
+	private void rideElevator(int riderId, int current, int destination) throws InterruptedException {
+		
 		Elevator arrived = null;
 		while (arrived == null) {
-			switch (direction) {
-			case UP:
-				arrived = this.getElevatorGoingUp(riderId, current, destination);
+			if (destination > current) {
+				arrived = myBuilding.AwaitUp(myId, riderId, current);
 				break;
-			case DOWN:
-				arrived = this.getElevatorGoingDown(riderId, current, destination);
-				break;
-			case STATIONARY:
+			}
+			if (destination < current) {
+				arrived = myBuilding.AwaitDown(myId, riderId, current);
 				break;
 			}
 		}
+		
 		arrived.Enter(myId, riderId, current);
 		arrived.ridingBarriers.get(current-1).complete();
 		arrived.RequestFloor(myId, riderId, destination, false);
@@ -55,18 +48,7 @@ public class Rider extends Thread {
 
 	}
 	
-	private void goToFloor(int riderId, int current, int destination) throws InterruptedException{
-		if(destination==current) {
-			this.myBuilding.log("T%d: NO-OP R%d S%d D%d\n", this.myId, riderId, current, destination);
-			return;
-		}
-		else if(destination>current){ //going up
-			this.rideElevator(Direction.UP, riderId, current, destination);
-		}
-		else if(destination<current){ //going down
-			this.rideElevator(Direction.DOWN, riderId, current, destination);
-		}
-	}
+
 	
 	
 	public void run() {
@@ -83,7 +65,7 @@ public class Rider extends Thread {
 				int riderId = info[0];
 				int start = info[1];
 				int destination = info[2];
-				goToFloor(riderId, start, destination);
+				rideElevator(riderId, start, destination);
 			}
 		} catch (InterruptedException e) {
 			e.printStackTrace();
